@@ -1,20 +1,29 @@
 {
-  "name": "vercel-blob-tfstate",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
-  },
-  "dependencies": {
-    "@hono/node-server": "^1.19.14",
-    "@hono/zod-validator": "^0.7.6",
-    "hono": "^4.12.14",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.17",
-    "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
-  }
+    "name": "vercel-blob-tfstate",
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "format": "oxfmt --write",
+        "format:check": "oxfmt --check",
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "@hono/node-server": "^1.19.14",
+        "@hono/zod-validator": "^0.7.6",
+        "hono": "^4.12.14",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.17",
+        "husky": "^9.1.7",
+        "oxfmt": "^0.46.0",
+        "oxlint": "^1.61.0",
+        "tsx": "^4.7.1",
+        "typescript": "^5.8.3"
+    },
+    "packageManager": "pnpm@10.33.2"
 }

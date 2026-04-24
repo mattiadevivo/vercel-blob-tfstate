@@ -1,14 +1,14 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const EnvSchema = z.object({
-    HTTP_PORT: z.number().default(3000),
-    HTTP_HOST: z.string().default("0.0.0.0"),
     BLOB_READ_WRITE_TOKEN: z.string({}),
-})
+    HTTP_HOST: z.string().default('0.0.0.0'),
+    HTTP_PORT: z.number().default(3000),
+});
 
 const ConfigSchema = z.object({
-    http: EnvSchema.pick({ HTTP_PORT: true, HTTP_HOST: true }),
     blob: EnvSchema.pick({ BLOB_READ_WRITE_TOKEN: true }),
+    http: EnvSchema.pick({ HTTP_HOST: true, HTTP_PORT: true }),
 });
 
 class Config {
@@ -17,14 +17,14 @@ class Config {
     constructor() {
         const env = EnvSchema.parse(process.env);
         this.env = {
-            http: {
-                HTTP_PORT: env.HTTP_PORT,
-                HTTP_HOST: env.HTTP_HOST,
-            },
             blob: {
                 BLOB_READ_WRITE_TOKEN: env.BLOB_READ_WRITE_TOKEN,
-            }
-        }
+            },
+            http: {
+                HTTP_HOST: env.HTTP_HOST,
+                HTTP_PORT: env.HTTP_PORT,
+            },
+        };
     }
 }
 
