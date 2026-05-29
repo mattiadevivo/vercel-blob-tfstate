@@ -1,21 +1,15 @@
 services:
     vercel-blob-tfstate:
-        build: .
+        build:
+            dockerfile: Dockerfile
+            context: .
+            args:
+                - INSTALL_REDIS=true
         ports:
-            - '${PORT:-8090}:8090'
+            - "${HTTP_PORT:-8090}:8090"
         environment:
             - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
             - AUTH_PASSWORD=${AUTH_PASSWORD}
-            - REDIS_URL=redis://redis:6379
-            - PORT=8090
-        depends_on:
-            - redis
-
-    redis:
-        image: redis:7-alpine
-        container_name: redis
-        volumes:
-            - redis-data:/data
-
-volumes:
-    redis-data:
+            - HTTP_PORT=8090
+        env_file:
+            - .env

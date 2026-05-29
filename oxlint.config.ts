@@ -10,7 +10,7 @@ export default defineConfig({
         'eslint/eqeqeq': 'error',
         'eslint/id-length': 'error',
         'eslint/no-await-in-loop': 'error',
-        "eslint/no-magic-numbers": "off",
+        'eslint/no-magic-numbers': 'off',
         'eslint/no-shadow': 'error',
         'eslint/no-unreachable': 'error',
         'eslint/no-unused-vars': 'error',
