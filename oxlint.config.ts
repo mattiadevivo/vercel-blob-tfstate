@@ -16,7 +16,7 @@ export default defineConfig({
         'eslint/no-unused-vars': 'error',
         'eslint/prefer-const': 'error',
         'eslint/require-await': 'error',
-        'eslint/sort-imports': 'error',
+        'eslint/sort-imports': ['error', { ignoreDeclarationSort: true }],
         'eslint/sort-keys': 'error',
         'import/no-cycle': 'error',
     },

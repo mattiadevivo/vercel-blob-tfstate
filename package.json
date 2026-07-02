@@ -1,8 +1,8 @@
 {
     "name": "vercel-blob-tfstate",
     "author": {
-        "email": "mattiadevivo@gmail.com",
         "name": "Mattia De Vivo",
+        "email": "mattiadevivo@gmail.com",
         "url": "https://mattiadevivo.dev"
     },
     "type": "module",
@@ -10,8 +10,8 @@
         "dev": "tsx watch src/index.ts",
         "build": "tsc",
         "start": "node dist/index.js",
-        "format": "oxfmt --write",
-        "format:check": "oxfmt --check",
+        "format": "oxfmt --write src tests *.json *.yml *.yaml",
+        "format:check": "oxfmt --check src tests *.json *.yml *.yaml",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "prepare": "[ -d .git ] && husky || true",
