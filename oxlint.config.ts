@@ -12,6 +12,7 @@ export default defineConfig({
         'eslint/no-await-in-loop': 'error',
         'eslint/no-magic-numbers': 'off',
         'eslint/no-shadow': 'error',
+        'eslint/no-undefined': 'error',
         'eslint/no-unreachable': 'error',
         'eslint/no-unused-vars': 'error',
         'eslint/prefer-const': 'error',
@@ -19,5 +20,6 @@ export default defineConfig({
         'eslint/sort-imports': ['error', { ignoreDeclarationSort: true }],
         'eslint/sort-keys': 'error',
         'import/no-cycle': 'error',
+        'unicorn/no-null': 'off',
     },
 });

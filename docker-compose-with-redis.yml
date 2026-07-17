@@ -2,7 +2,7 @@ services:
     vercel-blob-tfstate:
         build: .
         ports:
-            - "127.0.0.1:${HTTP_PORT:-8090}:8090"
+            - '127.0.0.1:${HTTP_PORT:-8090}:8090'
         environment:
             - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
             - AUTH_PASSWORD=${AUTH_PASSWORD}
@@ -17,7 +17,7 @@ services:
         image: redis:8-alpine
         container_name: redis
         ports:
-            - "127.0.0.1:6379:6379"
+            - '127.0.0.1:6379:6379'
         volumes:
             - redis-data:/data
 
@@ -25,7 +25,7 @@ services:
         image: redis/redisinsight:3.4.2
         container_name: redis-insight
         ports:
-            - "127.0.0.1:5540:5540"
+            - '127.0.0.1:5540:5540'
         environment:
             - RI_REDIS_HOST=redis
 

@@ -1,9 +1,10 @@
-import { Hono } from 'hono';
-import type { StateService } from '../application/state-service.js';
-import { basicAuth } from 'hono/basic-auth';
-import { createStateRouter } from './state/index.js';
-import { logger } from 'hono/logger';
 import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { basicAuth } from 'hono/basic-auth';
+import { logger } from 'hono/logger';
+
+import type { StateService } from '../application/state-service.js';
+import { createStateRouter } from './state/index.js';
 
 interface HttpConfig {
     HTTP_HOST: string;

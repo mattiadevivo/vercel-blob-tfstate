@@ -1,6 +1,7 @@
 import { del, get as getBlob, list, put } from '@vercel/blob';
-import type { State } from '../domain/state.js';
+
 import type { StateStore } from '../domain/ports/state-store.js';
+import type { State } from '../domain/state.js';
 
 class BlobStateStore implements StateStore {
     private token: string;
@@ -22,14 +23,14 @@ class BlobStateStore implements StateStore {
         );
     }
 
-    async get(name: string): Promise<State | undefined> {
+    async get(name: string): Promise<State | null> {
         const result = await getBlob(this.statePath(name), {
             access: 'private',
             token: this.token,
         });
 
         if (result === null || result.statusCode !== 200) {
-            return undefined;
+            return null;
         }
 
         return new Response(result.stream).text();
@@ -42,7 +43,6 @@ class BlobStateStore implements StateStore {
             allowOverwrite: true,
             contentType: 'application/json',
             token: this.token,
-
         });
     }
 

@@ -1,7 +1,10 @@
+import { Hono } from 'hono';
+
+import type { StateService } from '../../application/state-service.js';
 import { LockConflictError, LockMismatchError, StateNotFoundError } from '../../domain/errors.js';
 import { type LockInfo, LockInfoSchema } from '../../domain/lock-info.js';
-import { Hono } from 'hono';
-import type { StateService } from '../../application/state-service.js';
+import { zValidator } from '@hono/zod-validator';
+import { z } from "zod"
 
 const parseLockBody = (body: string): LockInfo => LockInfoSchema.parse(JSON.parse(body));
 
@@ -30,8 +33,7 @@ const createStateRouter = (stateService: StateService): Hono => {
         const name = context.req.param('name');
         const body = await context.req.text();
         // oxlint-disable-next-line no-ternary
-        const lockInfo: LockInfo | undefined = body.length === 0 ? undefined : parseLockBody(body);
-
+        const lockInfo: LockInfo | null = body.length === 0 ? null : parseLockBody(body);
 
         try {
             await stateService.releaseLock(name, lockInfo);
@@ -58,9 +60,12 @@ const createStateRouter = (stateService: StateService): Hono => {
         }
     });
 
-    router.post('/:name', async (context) => {
+    router.post('/:name', zValidator('query', z.object({
+        ID: z.string().optional()
+    })), async (context) => {
         const name = context.req.param('name');
-        const lockId = context.req.query('ID');
+        const queryParams = context.req.valid("query");
+        const lockId = queryParams.ID;
         const body = await context.req.text();
 
         try {

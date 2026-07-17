@@ -1,6 +1,7 @@
+import { Redis } from 'ioredis';
+
 import type { LockInfo } from '../domain/lock-info.js';
 import type { LockStore } from '../domain/ports/lock-store.js';
-import { Redis } from 'ioredis';
 
 class RedisLockStore implements LockStore {
     private redis: Redis;
@@ -13,11 +14,11 @@ class RedisLockStore implements LockStore {
         await this.redis.del(this.lockKey(name));
     }
 
-    async get(name: string): Promise<LockInfo | undefined> {
+    async get(name: string): Promise<LockInfo | null> {
         const data = await this.redis.get(this.lockKey(name));
 
         if (!data) {
-            return undefined;
+            return null;
         }
 
         return JSON.parse(data) as LockInfo;

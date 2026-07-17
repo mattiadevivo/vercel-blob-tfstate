@@ -1,8 +1,8 @@
 import { LockConflictError, LockMismatchError, StateNotFoundError } from '../domain/errors.js';
 import type { LockInfo } from '../domain/lock-info.js';
 import type { LockStore } from '../domain/ports/lock-store.js';
-import type { State } from '../domain/state.js';
 import type { StateStore } from '../domain/ports/state-store.js';
+import type { State } from '../domain/state.js';
 
 class StateService {
     private lockStore: LockStore;
@@ -32,9 +32,9 @@ class StateService {
 
     async getState(name: string): Promise<State> {
         const state = await this.stateStore.get(name);
-        console.log("StateService.getState", { name, state });
+        console.log('StateService.getState', { name, state });
 
-        if (state === undefined) {
+        if (state === null) {
             throw new StateNotFoundError(name);
         }
 
@@ -42,9 +42,9 @@ class StateService {
     }
 
     // LockInfo is optional: when undefined, the lock is deleted unconditionally (force-unlock).
-    async releaseLock(name: string, lockInfo: LockInfo | undefined): Promise<void> {
-        if (lockInfo === undefined) {
-            // Force unlock 
+    async releaseLock(name: string, lockInfo: LockInfo | null): Promise<void> {
+        if (lockInfo === null) {
+            // Force unlock
             await this.lockStore.delete(name);
             return;
         }
@@ -63,7 +63,11 @@ class StateService {
     }
 
     // LockId is optional: absent when the backend is configured without locking.
-    async updateState(name: string, state: State, lockId: LockInfo["ID"] | undefined): Promise<void> {
+    async updateState(
+        name: string,
+        state: State,
+        lockId?: LockInfo['ID'],
+    ): Promise<void> {
         if (lockId) {
             const existing = await this.lockStore.get(name);
 

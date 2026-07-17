@@ -1,9 +1,10 @@
-import { BlobStateStore } from './infrastructure/blob-state-store.js';
+import dotenv from 'dotenv';
+
+import { StateService } from './application/state-service.js';
 import { Config } from './config/config.js';
 import { HttpApp } from './http/index.js';
+import { BlobStateStore } from './infrastructure/blob-state-store.js';
 import { RedisLockStore } from './infrastructure/redis-lock-store.js';
-import { StateService } from './application/state-service.js';
-import dotenv from 'dotenv';
 const main = (): void => {
     dotenv.config();
     const config = new Config();
