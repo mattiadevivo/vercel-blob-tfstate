@@ -15,7 +15,8 @@
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "prepare": "[ -d .git ] && husky || true",
-        "test": "vitest"
+        "test": "vitest run",
+        "test:watch": "vitest"
     },
     "dependencies": {
         "@hono/node-server": "^2.0.4",
