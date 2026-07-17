@@ -66,28 +66,9 @@ const createStateRouter = (stateService: StateService): Hono => {
         }
     });
 
-    router.post(
-        '/:name',
-        pathParamsValidator(NameSchema),
-        queryParamsValidator(LockIdSchema),
-        async (context) => {
-            const { name } = context.req.valid('param');
-            const { ID: lockId } = context.req.valid('query');
-            const body = await context.req.text();
-
-            try {
-                await stateService.updateState(name, body, lockId);
-                return context.body(null, 200);
-            } catch (error) {
-                if (error instanceof LockMismatchError) {
-                    return context.json(error.existingLock, 409);
-                }
-                throw error;
-            }
-        },
-    );
-
-    router.put(
+    // Terraform's update_method defaults to POST but is user-configurable; support PUT too.
+    router.on(
+        ['POST', 'PUT'],
         '/:name',
         pathParamsValidator(NameSchema),
         queryParamsValidator(LockIdSchema),
