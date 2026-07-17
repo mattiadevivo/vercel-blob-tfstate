@@ -1,0 +1,15 @@
+services:
+    vercel-blob-tfstate:
+        build:
+            dockerfile: Dockerfile
+            context: .
+            args:
+                - INSTALL_REDIS=true
+        ports:
+            - '${HTTP_PORT:-8090}:8090'
+        environment:
+            - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN}
+            - AUTH_PASSWORD=${AUTH_PASSWORD}
+            - HTTP_PORT=8090
+        env_file:
+            - .env

@@ -1,0 +1,17 @@
+{
+    "version": 4,
+    "terraform_version": "1.13.3",
+    "serial": 1,
+    "lineage": "4bb7c3d0-9ac3-d75b-4c70-918f5c18d37b",
+    "outputs": {},
+    "resources": [
+        {
+            "mode": "data",
+            "type": "github_repository",
+            "name": "tvtrash",
+            "provider": "provider[\"registry.terraform.io/integrations/github\"]",
+            "instances": []
+        }
+    ],
+    "check_results": null
+}
