@@ -14,16 +14,12 @@ class StateService {
     }
 
     async acquireLock(name: string, lockInfo: LockInfo): Promise<void> {
-        const existing = await this.lockStore.get(name);
+        const existingLock = await this.lockStore.tryAcquire(name, lockInfo);
 
-        if (existing) {
-            if (existing.ID === lockInfo.ID) {
-                return;
-            }
-            throw new LockConflictError(existing);
+        // Re-acquiring a lock we already hold (same ID) is a no-op.
+        if (existingLock && existingLock.ID !== lockInfo.ID) {
+            throw new LockConflictError(existingLock);
         }
-
-        await this.lockStore.put(name, lockInfo);
     }
 
     async deleteState(name: string): Promise<void> {
@@ -63,11 +59,7 @@ class StateService {
     }
 
     // LockId is optional: absent when the backend is configured without locking.
-    async updateState(
-        name: string,
-        state: State,
-        lockId?: LockInfo['ID'],
-    ): Promise<void> {
+    async updateState(name: string, state: State, lockId?: LockInfo['ID']): Promise<void> {
         if (lockId) {
             const existing = await this.lockStore.get(name);
 

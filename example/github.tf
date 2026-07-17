@@ -1,4 +1,4 @@
-data "github_repository" "tvtrash" {
+data "github_repository" "example" {
   full_name = "mattiadevivo/trevisorifiuti.top"
 }
 

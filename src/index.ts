@@ -10,7 +10,7 @@ const main = (): void => {
     const config = new Config();
 
     const stateStore = new BlobStateStore(config.env.blob.BLOB_READ_WRITE_TOKEN);
-    const lockStore = new RedisLockStore(config.env.redis.REDIS_URL);
+    const lockStore = new RedisLockStore(config.env.redis);
     const stateService = new StateService(stateStore, lockStore);
 
     const httpApp = new HttpApp(config.env.http, stateService, config.env.auth.AUTH_PASSWORD);

@@ -3,34 +3,40 @@ import { Hono } from 'hono';
 import type { StateService } from '../../application/state-service.js';
 import { LockConflictError, LockMismatchError, StateNotFoundError } from '../../domain/errors.js';
 import { type LockInfo, LockInfoSchema } from '../../domain/lock-info.js';
-import { zValidator } from '@hono/zod-validator';
-import { z } from "zod"
-
-const parseLockBody = (body: string): LockInfo => LockInfoSchema.parse(JSON.parse(body));
+import { jsonBodyValidator, pathParamsValidator, queryParamsValidator } from '../validators/req.js';
+import { LockIdSchema, NameSchema } from '../validators/schemas.js';
+import { parseLockBody } from './utils.js';
 
 const createStateRouter = (stateService: StateService): Hono => {
     const router = new Hono();
 
-    router.post('/:name/lock', async (context) => {
-        const name = context.req.param('name');
-        const body = await context.req.json();
-        console.log('Received body for lock release:', body);
-        const lockInfo = LockInfoSchema.parse(body);
+    router.post(
+        '/:name/lock',
+        pathParamsValidator(NameSchema),
+        jsonBodyValidator(LockInfoSchema),
+        async (context) => {
+            const pathParams = context.req.valid('param');
+            const body = context.req.valid('json');
 
-        try {
-            await stateService.acquireLock(name, lockInfo);
-            return context.body(null, 200);
-        } catch (error) {
-            if (error instanceof LockConflictError) {
-                return context.json(error.existingLock, 409);
+            const { name } = pathParams;
+            console.log('Received body for lock release:', body);
+
+            try {
+                await stateService.acquireLock(name, body);
+                return context.body(null, 200);
+            } catch (error) {
+                if (error instanceof LockConflictError) {
+                    return context.json(error.existingLock, 409);
+                }
+                throw error;
             }
-            throw error;
-        }
-    });
+        },
+    );
 
     // oxlint-disable-next-line max-statements
-    router.delete('/:name/lock', async (context) => {
-        const name = context.req.param('name');
+    router.delete('/:name/lock', pathParamsValidator(NameSchema), async (context) => {
+        const pathParams = context.req.valid('param');
+        const { name } = pathParams;
         const body = await context.req.text();
         // oxlint-disable-next-line no-ternary
         const lockInfo: LockInfo | null = body.length === 0 ? null : parseLockBody(body);
@@ -46,8 +52,9 @@ const createStateRouter = (stateService: StateService): Hono => {
         }
     });
 
-    router.get('/:name', async (context) => {
-        const name = context.req.param('name');
+    router.get('/:name', pathParamsValidator(NameSchema), async (context) => {
+        const pathParams = context.req.valid('param');
+        const { name } = pathParams;
 
         try {
             const state = await stateService.getState(name);
@@ -60,43 +67,51 @@ const createStateRouter = (stateService: StateService): Hono => {
         }
     });
 
-    router.post('/:name', zValidator('query', z.object({
-        ID: z.string().optional()
-    })), async (context) => {
-        const name = context.req.param('name');
-        const queryParams = context.req.valid("query");
-        const lockId = queryParams.ID;
-        const body = await context.req.text();
+    router.post(
+        '/:name',
+        pathParamsValidator(NameSchema),
+        queryParamsValidator(LockIdSchema),
+        async (context) => {
+            const { name } = context.req.valid('param');
+            const { ID: lockId } = context.req.valid('query');
+            const body = await context.req.text();
 
-        try {
-            await stateService.updateState(name, body, lockId);
-            return context.body(null, 200);
-        } catch (error) {
-            if (error instanceof LockMismatchError) {
-                return context.json(error.existingLock, 409);
+            try {
+                await stateService.updateState(name, body, lockId);
+                return context.body(null, 200);
+            } catch (error) {
+                if (error instanceof LockMismatchError) {
+                    return context.json(error.existingLock, 409);
+                }
+                throw error;
             }
-            throw error;
-        }
-    });
+        },
+    );
 
-    router.put('/:name', async (context) => {
-        const name = context.req.param('name');
-        const lockId = context.req.query('ID');
-        const body = await context.req.text();
+    router.put(
+        '/:name',
+        pathParamsValidator(NameSchema),
+        queryParamsValidator(LockIdSchema),
+        async (context) => {
+            const { name } = context.req.valid('param');
+            const { ID: lockId } = context.req.valid('query');
+            const body = await context.req.text();
 
-        try {
-            await stateService.updateState(name, body, lockId);
-            return context.body(null, 200);
-        } catch (error) {
-            if (error instanceof LockMismatchError) {
-                return context.json(error.existingLock, 409);
+            try {
+                await stateService.updateState(name, body, lockId);
+                return context.body(null, 200);
+            } catch (error) {
+                if (error instanceof LockMismatchError) {
+                    return context.json(error.existingLock, 409);
+                }
+                throw error;
             }
-            throw error;
-        }
-    });
+        },
+    );
 
-    router.delete('/:name', async (context) => {
-        const name = context.req.param('name');
+    router.delete('/:name', pathParamsValidator(NameSchema), async (context) => {
+        const pathParams = context.req.valid('param');
+        const { name } = pathParams;
         await stateService.deleteState(name);
         return context.body(null, 200);
     });

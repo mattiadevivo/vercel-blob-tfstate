@@ -5,6 +5,7 @@ const EnvSchema = z.object({
     BLOB_READ_WRITE_TOKEN: z.string(),
     HTTP_HOST: z.string().default('0.0.0.0'),
     HTTP_PORT: z.coerce.number().default(3000),
+    REDIS_LOCK_ACQUIRE_ATTEMPTS: z.coerce.number().int().positive().default(3),
     REDIS_URL: z.string().default('redis://localhost:6379'),
 });
 
@@ -12,7 +13,7 @@ const ConfigSchema = z.object({
     auth: EnvSchema.pick({ AUTH_PASSWORD: true }),
     blob: EnvSchema.pick({ BLOB_READ_WRITE_TOKEN: true }),
     http: EnvSchema.pick({ HTTP_HOST: true, HTTP_PORT: true }),
-    redis: EnvSchema.pick({ REDIS_URL: true }),
+    redis: EnvSchema.pick({ REDIS_LOCK_ACQUIRE_ATTEMPTS: true, REDIS_URL: true }),
 });
 
 class Config {
@@ -32,6 +33,7 @@ class Config {
                 HTTP_PORT: env.HTTP_PORT,
             },
             redis: {
+                REDIS_LOCK_ACQUIRE_ATTEMPTS: env.REDIS_LOCK_ACQUIRE_ATTEMPTS,
                 REDIS_URL: env.REDIS_URL,
             },
         };

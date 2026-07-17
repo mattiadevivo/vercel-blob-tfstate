@@ -37,31 +37,40 @@ describe('StateService', () => {
         lockStoreMock = {
             delete: vi.fn(),
             get: vi.fn(),
-            put: vi.fn(),
+            tryAcquire: vi.fn(),
         };
         service = new StateService(stateStoreMock, lockStoreMock);
     });
 
     describe('acquireLock', () => {
         test('should acquire lock successfully', async () => {
-            lockStoreMock.get.mockResolvedValue(lockInfo);
+            lockStoreMock.tryAcquire.mockResolvedValue(null);
 
             await service.acquireLock('test', lockInfo);
 
-            expect(lockStoreMock.get).toHaveBeenCalledOnce();
-            expect(lockStoreMock.get).toHaveBeenCalledWith('test');
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledOnce();
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledWith('test', lockInfo);
+        });
+
+        test('should succeed if the same lock ID is already held', async () => {
+            lockStoreMock.tryAcquire.mockResolvedValue(lockInfo);
+
+            await expect(service.acquireLock('test', lockInfo)).resolves.toBeUndefined();
+
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledOnce();
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledWith('test', lockInfo);
         });
 
         test('should raise LockConflictError if lock is already acquired', async () => {
-            lockStoreMock.get.mockResolvedValue({
+            lockStoreMock.tryAcquire.mockResolvedValue({
                 ...lockInfo,
                 ID: 'different-lock-id',
             });
 
             await expect(service.acquireLock('test', lockInfo)).rejects.toThrow(LockConflictError);
 
-            expect(lockStoreMock.get).toHaveBeenCalledOnce();
-            expect(lockStoreMock.get).toHaveBeenCalledWith('test');
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledOnce();
+            expect(lockStoreMock.tryAcquire).toHaveBeenCalledWith('test', lockInfo);
         });
     });
 
