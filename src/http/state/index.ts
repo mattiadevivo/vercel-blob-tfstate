@@ -19,7 +19,6 @@ const createStateRouter = (stateService: StateService): Hono => {
             const body = context.req.valid('json');
 
             const { name } = pathParams;
-            console.log('Received body for lock release:', body);
 
             try {
                 await stateService.acquireLock(name, body);

@@ -28,7 +28,6 @@ class StateService {
 
     async getState(name: string): Promise<State> {
         const state = await this.stateStore.get(name);
-        console.log('StateService.getState', { name, state });
 
         if (state === null) {
             throw new StateNotFoundError(name);
