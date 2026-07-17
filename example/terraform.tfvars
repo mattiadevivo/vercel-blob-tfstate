@@ -1,1 +1,0 @@
-github_token = "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"
