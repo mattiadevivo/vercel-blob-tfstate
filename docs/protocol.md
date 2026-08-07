@@ -1,8 +1,7 @@
 # Terraform HTTP Backend — Protocol Reference
 
 This document describes the HTTP contract the Terraform CLI (and OpenTofu)
-expects when configured with `backend "http"`. The machine-readable spec
-lives in [`openapi.yaml`](./openapi.yaml); this page is the narrative version.
+expects when configured with `backend "http"`.
 
 The official HashiCorp page ([developer.hashicorp.com/terraform/language/backend/http](https://developer.hashicorp.com/terraform/language/backend/http))
 documents the client-side configuration options but not the wire format. The

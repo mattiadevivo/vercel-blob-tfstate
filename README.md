@@ -33,7 +33,7 @@ Works with OpenTofu too.
 
 All `/state/*` routes are protected with HTTP basic auth: the username is ignored, the password must match `AUTH_PASSWORD`.
 
-See [`protocol.md`](./protocol.md) for the full wire protocol and [`openapi.yaml`](./openapi.yaml) for the machine-readable spec.
+See [`protocol.md`](./docs/protocol.md) for the full wire protocol.
 
 ## Configuring Terraform
 
