@@ -1,0 +1,73 @@
+name: ci
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    lint-format-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+              #with:
+              #  version: "10.33.2" # not needed since packageManager field is set in package.json
+            - uses: pnpm/action-setup@v6
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm lint
+            - run: pnpm format:check
+            - run: pnpm test
+
+    docker:
+        needs: lint-format-test
+        if: github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Login to Docker Hub
+              uses: docker/login-action@v4
+              with:
+                  username: ${{ vars.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+            - name: Docker meta (standalone)
+              id: meta
+              uses: docker/metadata-action@v6
+              with:
+                  images: mattiadevivo/vercel-blob-tfstate
+                  tags: |
+                      type=raw,value=latest
+                      type=sha
+            - name: Docker meta (embedded redis)
+              id: meta-redis
+              uses: docker/metadata-action@v6
+              with:
+                  images: mattiadevivo/vercel-blob-tfstate
+                  flavor: |
+                      suffix=-redis
+                  tags: |
+                      type=raw,value=latest
+                      type=sha
+            - name: Build and push (standalone)
+              uses: docker/build-push-action@v7
+              with:
+                  push: true
+                  build-args: INSTALL_REDIS=false
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+            - name: Build and push (embedded redis)
+              uses: docker/build-push-action@v7
+              with:
+                  push: true
+                  build-args: INSTALL_REDIS=true
+                  tags: ${{ steps.meta-redis.outputs.tags }}
+                  labels: ${{ steps.meta-redis.outputs.labels }}
