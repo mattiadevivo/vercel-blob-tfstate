@@ -94,6 +94,38 @@ pnpm start
 
 ## Running with Docker
 
+### Prebuilt images from Docker Hub
+
+CI publishes images to [`mattiadevivo/vercel-blob-tfstate`](https://hub.docker.com/r/mattiadevivo/vercel-blob-tfstate) on every push to `main`, in two variants:
+
+| Tag                | Redis                          | Pinned equivalent |
+| ------------------ | ------------------------------ | ----------------- |
+| `latest`           | external (set `REDIS_URL`)     | `sha-<commit>`    |
+| `latest-redis`     | embedded in the container      | `sha-<commit>-redis` |
+
+With embedded Redis (no other containers needed; locks don't survive restarts):
+
+```sh
+docker run -p 8090:8090 \
+  -e HTTP_PORT=8090 \
+  -e BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxxxx \
+  -e AUTH_PASSWORD=your-secret-password \
+  mattiadevivo/vercel-blob-tfstate:latest-redis
+```
+
+With an external Redis:
+
+```sh
+docker run -p 8090:8090 \
+  -e HTTP_PORT=8090 \
+  -e BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxxxx \
+  -e AUTH_PASSWORD=your-secret-password \
+  -e REDIS_URL=redis://your-redis:6379 \
+  mattiadevivo/vercel-blob-tfstate:latest
+```
+
+For reproducible deployments, pin a `sha-<commit>` tag instead of `latest`.
+
 ### Single container (embedded Redis)
 
 [`docker-compose.yml`](./docker-compose.yml) builds the image with `INSTALL_REDIS=true`, so Redis runs inside the same container. Simplest option, no persistence for locks across restarts:
