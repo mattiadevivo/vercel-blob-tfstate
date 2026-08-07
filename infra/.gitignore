@@ -1,0 +1,5 @@
+supabase-access-token
+render-api-key
+.terraform
+.env
+terraform.tfvars
