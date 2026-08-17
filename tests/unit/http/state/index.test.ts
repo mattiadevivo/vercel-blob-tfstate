@@ -2,14 +2,14 @@
 import type { Hono } from 'hono';
 import { type Mocked, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type { StateService } from '../../../../src/application/state-service';
+import type { StateService } from '../../../../src/application/state-service.js';
 import {
     LockConflictError,
     LockMismatchError,
     StateNotFoundError,
-} from '../../../../src/domain/errors';
-import type { LockInfo } from '../../../../src/domain/lock-info';
-import { createStateRouter } from '../../../../src/http/state/index';
+} from '../../../../src/domain/errors.js';
+import type { LockInfo } from '../../../../src/domain/lock-info.js';
+import { createStateRouter } from '../../../../src/http/state/index.js';
 
 describe('createStateRouter', () => {
     let router: Hono;

@@ -9,7 +9,7 @@ import {
 } from '@vercel/blob';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { BlobStateStore } from '../../../src/infrastructure/blob-state-store';
+import { BlobStateStore } from '../../../src/infrastructure/blob-state-store.js';
 
 vi.mock('@vercel/blob', () => ({
     del: vi.fn(),
