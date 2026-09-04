@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator';
+import { validator as zValidator } from 'hono-openapi';
 import type { z } from 'zod';
 
 const pathParamsValidator = <Schema extends z.ZodObject<z.ZodRawShape>>(object: Schema) =>

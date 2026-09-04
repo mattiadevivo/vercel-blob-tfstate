@@ -3,15 +3,15 @@ import { readFileSync } from 'node:fs';
 // oxlint-disable init-declarations
 import { type Mocked, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { StateService } from '../../../src/application/state-service';
+import { StateService } from '../../../src/application/state-service.js';
 import {
     LockConflictError,
     LockMismatchError,
     StateNotFoundError,
-} from '../../../src/domain/errors';
-import type { LockInfo } from '../../../src/domain/lock-info';
-import type { LockStore } from '../../../src/domain/ports/lock-store';
-import type { StateStore } from '../../../src/domain/ports/state-store';
+} from '../../../src/domain/errors.js';
+import type { LockInfo } from '../../../src/domain/lock-info.js';
+import type { LockStore } from '../../../src/domain/ports/lock-store.js';
+import type { StateStore } from '../../../src/domain/ports/state-store.js';
 
 describe('StateService', () => {
     let service: StateService;
@@ -139,7 +139,7 @@ describe('StateService', () => {
 
     describe('updateState', () => {
         test('should update state successfully without lock', async () => {
-            await service.updateState('test', 'new state', null);
+            await service.updateState('test', 'new state');
 
             expect(stateStoreMock.put).toHaveBeenCalledOnce();
             expect(stateStoreMock.put).toHaveBeenCalledWith('test', 'new state');

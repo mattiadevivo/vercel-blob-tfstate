@@ -2,8 +2,8 @@
 import { Redis } from 'ioredis';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type { LockInfo } from '../../../src/domain/lock-info';
-import { RedisLockStore } from '../../../src/infrastructure/redis-lock-store';
+import type { LockInfo } from '../../../src/domain/lock-info.js';
+import { RedisLockStore } from '../../../src/infrastructure/redis-lock-store.js';
 
 vi.mock('ioredis', () => {
     const RedisMock = vi.fn();
