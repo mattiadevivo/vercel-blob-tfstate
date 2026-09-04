@@ -57,7 +57,7 @@ class HttpApp {
                 },
             }),
         );
-        if (this.config.APP_VERSION === "dev") {
+        if (this.config.APP_VERSION === 'dev') {
             this.app.get('/ui', swaggerUI({ url: '/openapi' }));
         }
     }
