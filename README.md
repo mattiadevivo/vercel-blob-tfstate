@@ -69,10 +69,15 @@ The server is configured entirely through environment variables (a `.env` file i
 | `AUTH_PASSWORD`               | no       | `''`                     | Basic auth password for `/state/*` (set one!)      |
 | `HTTP_HOST`                   | no       | `0.0.0.0`                | Listen address                                     |
 | `HTTP_PORT`                   | no       | `3000`                   | Listen port                                        |
-| `REDIS_URL`                   | no       | `redis://localhost:6379` | Redis connection URL                               |
+| `LOCK_BACKEND`                | no       | `redis`                  | Lock backend: `redis` or `memory` (no Redis)       |
+| `REDIS_URL`                   | no       | `redis://localhost:6379` | Redis connection URL (only when `LOCK_BACKEND=redis`) |
 | `REDIS_LOCK_ACQUIRE_ATTEMPTS` | no       | `3`                      | Retry attempts for atomic lock acquisition         |
 
 You need a Vercel Blob store: create one in the Vercel dashboard (Storage > Blob) and copy its read-write token.
+
+### Locking
+
+By default the server uses Redis to coordinate state locks, which is required when running more than one instance. For a single-instance deployment (for example, a short-lived container in CI) you can set `LOCK_BACKEND=memory` to keep locks in process memory and avoid running Redis entirely. In-memory locks are not shared across instances and are lost on restart.
 
 ## Running from source
 
@@ -100,7 +105,7 @@ CI publishes images to [`mattiadevivo/vercel-blob-tfstate`](https://hub.docker.c
 
 | Tag                | Redis                          | Pinned equivalent |
 | ------------------ | ------------------------------ | ----------------- |
-| `latest`           | external (set `REDIS_URL`)     | `sha-<commit>`    |
+| `latest`           | external (`REDIS_URL`) or none (`LOCK_BACKEND=memory`) | `sha-<commit>`    |
 | `latest-redis`     | embedded in the container      | `sha-<commit>-redis` |
 
 With embedded Redis (no other containers needed; locks don't survive restarts):
