@@ -27,6 +27,7 @@ describe('Config', () => {
                     'HTTP Server used to host Terraform/OpentTofu storage backend for state',
                 HTTP_SERVER_NAME: 'Vercel Blob Tfstate API',
             },
+            lock: { LOCK_BACKEND: 'redis' },
             redis: {
                 REDIS_LOCK_ACQUIRE_ATTEMPTS: 3,
                 REDIS_URL: 'redis://localhost:6379',
@@ -43,6 +44,7 @@ describe('Config', () => {
             HTTP_PORT: '8090',
             HTTP_SERVER_DESCRIPTION: 'Test description',
             HTTP_SERVER_NAME: 'Test API',
+            LOCK_BACKEND: 'memory',
             REDIS_LOCK_ACQUIRE_ATTEMPTS: '5',
             REDIS_URL: 'redis://redis:6379',
         };
@@ -59,11 +61,18 @@ describe('Config', () => {
                 HTTP_SERVER_DESCRIPTION: 'Test description',
                 HTTP_SERVER_NAME: 'Test API',
             },
+            lock: { LOCK_BACKEND: 'memory' },
             redis: {
                 REDIS_LOCK_ACQUIRE_ATTEMPTS: 5,
                 REDIS_URL: 'redis://redis:6379',
             },
         });
+    });
+
+    test('should reject an unknown LOCK_BACKEND value', () => {
+        process.env.LOCK_BACKEND = 'postgres';
+
+        expect(() => new Config()).toThrow();
     });
 
     test('should throw when BLOB_READ_WRITE_TOKEN is missing', () => {

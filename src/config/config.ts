@@ -10,6 +10,7 @@ const EnvSchema = z.object({
         .string()
         .default('HTTP Server used to host Terraform/OpentTofu storage backend for state'),
     HTTP_SERVER_NAME: z.string().default('Vercel Blob Tfstate API'),
+    LOCK_BACKEND: z.enum(['memory', 'redis']).default('redis'),
     REDIS_LOCK_ACQUIRE_ATTEMPTS: z.coerce.number().int().positive().default(3),
     REDIS_URL: z.string().default('redis://localhost:6379'),
 });
@@ -24,6 +25,7 @@ const ConfigSchema = z.object({
         HTTP_SERVER_DESCRIPTION: true,
         HTTP_SERVER_NAME: true,
     }),
+    lock: EnvSchema.pick({ LOCK_BACKEND: true }),
     redis: EnvSchema.pick({ REDIS_LOCK_ACQUIRE_ATTEMPTS: true, REDIS_URL: true }),
 });
 
@@ -45,6 +47,9 @@ class Config {
                 HTTP_PORT: env.HTTP_PORT,
                 HTTP_SERVER_DESCRIPTION: env.HTTP_SERVER_DESCRIPTION,
                 HTTP_SERVER_NAME: env.HTTP_SERVER_NAME,
+            },
+            lock: {
+                LOCK_BACKEND: env.LOCK_BACKEND,
             },
             redis: {
                 REDIS_LOCK_ACQUIRE_ATTEMPTS: env.REDIS_LOCK_ACQUIRE_ATTEMPTS,
